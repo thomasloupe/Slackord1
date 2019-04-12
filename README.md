@@ -13,10 +13,10 @@ or
 
 Step 3: Open a terminal or command prompt and use the appropriate command per your OS to install discord.py.
 
-# Linux/OS X
+Linux/OS X
 "python3 -m pip install -U discord.py"
 
-# Windows
+Windows
 "py -3 -m pip install -U discord.py"
 
 Step 4: Set up a Discord bot with the permissions of "bot", and "Administrator", or 
