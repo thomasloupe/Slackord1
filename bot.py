@@ -21,9 +21,11 @@ async def on_ready():
 
 @bot.command(pass_context=True)
 async def mergeslack(ctx):
-    for message in data:
-        await ctx.send(message["real_name"])
-        await ctx.send(message["datetime"])
-        await ctx.send(message["text"])
+	with open('test.json') as json_file:
+		data = json.load(json_file)
+		for message in data:
+			await ctx.send(message["real_name"])
+			await ctx.send(message["datetime"])
+			await ctx.send(message["text"])
 
 bot.run(TOKEN)
