@@ -36,7 +36,7 @@ async def mergeslack(ctx):
                 try:
                     await ctx.send(message["datetime"] + ': ', message["real_name"] + ': ', message["text"])
                 # If message fails to post, due a rate-limiting check and try every ten seconds until success
-                except HTTPException as he:
+                except discord.HTTPException as he:
                     while True:
                         await asyncio.time(10)
                         await ctx.send(message["datetime"] + ': ', message["real_name"] + ': ', message["text"])
@@ -44,7 +44,7 @@ async def mergeslack(ctx):
                 try:
                     await ctx.send(message["datetime"] + ': ', message["real_name"] + ': ', message["text"])
                 # If message fails to post, due a rate-limiting check and try every ten seconds until success
-                except HTTPException as he:
+                except discord.HTTPException as he:
                     while True:
                         await asyncio.time(10)
                         await ctx.send("%s BOT MESSAGE" % (message["bot_message"], + ': ', message["text"]))
