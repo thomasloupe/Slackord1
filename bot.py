@@ -6,7 +6,7 @@ import time
 from discord.ext import commands
 
 # Insert the Discord bot token into the quoted section below
-TOKEN = 'NTY1OTcwNzQxNDM1MTcwODY5.XLCllA.6XOWEoS2Ke7ePIaUcQrAslbd2rs'
+TOKEN = ''
 
 bot = commands.Bot(command_prefix = '!')
 
@@ -23,7 +23,7 @@ with open('test.json') as json_file:
 
 @bot.event
 async def on_ready():
-    print('Bot ready for parsing JSON!')
+    print('Slackord is now ready to send messages to Discord! Type !mergeslack in the channel you wish to send messages to.')
     print(' ')
 
 # When !mergeslack is typed in a channel, iterate through the JSON file and post the message
