@@ -1,31 +1,52 @@
+import asyncio
 import discord
 import json
+import time
 
 from discord.ext import commands
 
-TOKEN = ''
+# Insert the Discord bot token into the quoted section below
+TOKEN = 'NTY1OTcwNzQxNDM1MTcwODY5.XLCllA.6XOWEoS2Ke7ePIaUcQrAslbd2rs'
 
 bot = commands.Bot(command_prefix = '!')
 
+# Change the JSON file name in the quoted field below.
 with open('test.json') as json_file:
     data = json.load(json_file)
     for message in data:
-        print(message["real_name"])
-        print(message["datetime"])
-        print(message["text"])
-        print (' ')
+        # Print the messages we'll output to Discord from the Slack JSON file into console for the user to see.
+        if "real_name" in message.keys() and "datetime" in message.keys() and "text" in message.keys():
+            print(message["datetime"] + ': ', message["real_name"] + ': ', message["text"])
+            print (' ')
+        elif "bot_message" in message.keys() and "text" in message.keys():
+            print ("%s BOT MESSAGE" % (message["bot_message"], + ': ', message["text"]))
 
 @bot.event
 async def on_ready():
     print('Bot ready for parsing JSON!')
+    print(' ')
 
+# When !mergeslack is typed in a channel, iterate through the JSON file and post the message
 @bot.command(pass_context=True)
 async def mergeslack(ctx):
-	with open('test.json') as json_file:
-		data = json.load(json_file)
-		for message in data:
-			await ctx.send(message["real_name"])
-			await ctx.send(message["datetime"])
-			await ctx.send(message["text"])
+    with open('test.json') as json_file:
+        data = json.load(json_file)
+        for message in data:
+            if "real_name" in message.keys() and "datetime" in message.keys() and "text" in message.keys():
+                try:
+                    await ctx.send(message["datetime"] + ': ', message["real_name"] + ': ', message["text"])
+                # If message fails to post, due a rate-limiting check and try every ten seconds until success
+                except HTTPException as he:
+                    while True:
+                        await asyncio.time(10)
+                        await ctx.send(message["datetime"] + ': ', message["real_name"] + ': ', message["text"])
+            elif "bot_message" in message.keys() and "text" in message.keys():
+                try:
+                    await ctx.send(message["datetime"] + ': ', message["real_name"] + ': ', message["text"])
+                # If message fails to post, due a rate-limiting check and try every ten seconds until success
+                except HTTPException as he:
+                    while True:
+                        await asyncio.time(10)
+                        await ctx.send("%s BOT MESSAGE" % (message["bot_message"], + ': ', message["text"]))
 
 bot.run(TOKEN)
