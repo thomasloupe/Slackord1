@@ -47,6 +47,7 @@ or
 
 The bot will now parse all the messages from your Slack message json file.
 
-# Step 10: Enter the channel you wish to import messages to and type "!mergeslack"
+# Step 10:
+Enter the channel you wish to import messages to and type "!mergeslack"
 
 Messages should now appear in the Discord channel you typed the command into.
