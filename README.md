@@ -30,7 +30,7 @@ Set up a Discord bot with the permissions of "bot", and "Administrator", or
 Generate a secret token for the bot. Copy it to clipboard.
 
 # Step 6:
-Insert the token into the field where " token='' " is in the single quote area of bot.py file.
+Insert the token into the field where " token='' " is in the single quote area of slackord.py file.
 
 # Step 7:
 Change the location/name of the json file where "test.json" is on the line with "with open('test.json') as json_file:"
@@ -41,9 +41,9 @@ Invite the bot to your Discord server.
 # Step 9:
 Open console and run:
 
-"py bot.py"
+"py slackord.py"
 or
-"python bot.py"
+"python slackord.py"
 
 The bot will now parse all the messages from your Slack message json file.
 
