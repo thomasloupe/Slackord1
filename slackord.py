@@ -16,10 +16,10 @@ with open('test.json') as json_file:
     for message in data:
         # Print the messages we'll output to Discord from the Slack JSON file into console for the user to see.
         if "real_name" in message.keys() and "datetime" in message.keys() and "text" in message.keys():
-            print(message["datetime"]) + (': '), (message["real_name"]) + (': '), (message["text"])
+            print((message["datetime"]) + (': ') + (message["real_name"]) + (': ') + (message["text"]))
             print (' ')
         elif "bot_message" in message.keys() and "text" in message.keys():
-            print ("%s BOT MESSAGE" % (message["bot_message"]), + (': '), (message["text"]))
+            print ("%s BOT MESSAGE" % (message["bot_message"]) + (': ') + (message["text"]))
 
 @bot.event
 async def on_ready():
@@ -33,10 +33,10 @@ async def mergeslack(ctx):
         data = json.load(json_file)
         for message in data:
             if "real_name" in message.keys() and "datetime" in message.keys() and "text" in message.keys():
-                messageToSend = ((message["datetime"]) + (': '), (message["real_name"]) + (': '), (message["text"]))
+                messageToSend = ((message["datetime"]) + (': ') + (message["real_name"]) + (': ') + (message["text"]))
                 await ctx.send(messageToSend)
             elif "bot_message" in message.keys() and "text" in message.keys():
-                messageToSend = ("%s BOT MESSAGE" % (message["bot_message"]), + (': '), (message["text"]))
+                messageToSend = ("%s BOT MESSAGE" % (message["bot_message"]) + (': ') + (message["text"]))
                 await ctx.send(messageToSend)
 
 bot.run(TOKEN)
