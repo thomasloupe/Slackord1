@@ -5,6 +5,7 @@ Instructions:
 
 # Step 1:
 Install Python 3.7
+https://www.python.org/downloads/release/python-373/
 
 # Step 2:
 Install pip.
