@@ -5,9 +5,6 @@ import time
 
 from discord.ext import commands
 
-# Insert the Discord bot token into the quoted section below
-TOKEN = ''
-
 bot = commands.Bot(command_prefix='!')
 
 # Change the JSON file name in the quoted field below.
@@ -50,4 +47,6 @@ async def mergeslack(ctx):
                     message["bot_message"]) + (': ') + (message["text"]))
                 await ctx.send(messageToSend)
 
-bot.run(TOKEN)
+
+# Insert the Discord bot token into the quoted section below
+bot.run(TOKENHERE)
