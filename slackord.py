@@ -32,10 +32,9 @@ async def on_ready():
     print('Type !mergeslack in the channel you wish to send messages to.')
     print(' ')
 
+
 # When !mergeslack is typed in a channel, iterate
 # through the JSON file and post the message.
-
-
 @bot.command(pass_context=True)
 async def mergeslack(ctx):
     with open('test.json') as json_file:
