@@ -30,7 +30,7 @@ Set up a Discord bot with the permissions of "bot", and "Administrator", or
 Generate a secret token for the bot. Copy it to clipboard.
 
 # Step 6:
-Insert the token into the field where " token='' " is in the single quote area of slackord.py file.
+Insert the bot's token into the "bot.run(TOKEN)" field.
 
 # Step 7:
 Change the location/name of the json file where "test.json" is on the line with "with open('test.json') as json_file:"
