@@ -1,6 +1,10 @@
 # Slackord
 A Discord bot that moves Slack-exported JSON chat history to Discord channels.
 
+Please download the 0.5 release from https://github.com/thomasloupe/Slackord/releases/tag/0.5.
+
+The 1.0 release is in alpha and may be broken.
+
 Instructions:
 
 # Step 1:
