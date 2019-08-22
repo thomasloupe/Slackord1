@@ -6,6 +6,7 @@ from tkinter import *
 import asyncio
 import discord
 import json
+import time
 
 bot = commands.Bot(command_prefix='!')
 
