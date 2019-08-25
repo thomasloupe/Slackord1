@@ -13,7 +13,6 @@ bot = commands.Bot(command_prefix='!')
 
 def ParseAndPost():
     filename = tk.filedialog.askopenfilename()
-    # Change the JSON file name in the quoted field below.
     with open(filename) as json_file:
         data = json.load(json_file)
     for message in data:
