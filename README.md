@@ -1,57 +1,25 @@
-# Slackord
-A Discord bot that moves Slack-exported JSON chat history to Discord channels.
+# Slackord 1.0 by Thomas Loupe
 
-Please download the 0.5 release from https://github.com/thomasloupe/Slackord/releases/tag/0.5.
+A Discord bot that imports Slack-exported JSON chat history to a Discord channel.
 
-The 1.0 release is in alpha and may be broken.
-
-Instructions:
+# Instructions:
 
 # Step 1:
-Install Python 3.7: https://www.python.org/downloads/release/python-373/
+
+Set up Discord bot and create a token here https://discordapp.com/developers/applications/.
 
 # Step 2:
-Install pip.
 
-"python get-pip.py"
-or
-"py get-pip.py"
+Run the Slackord executable file.
 
 # Step 3:
-Open a terminal or command prompt and use the appropriate command per your OS to install discord.py.
 
-Linux/OS X
-"python3 -m pip install -U discord.py"
-
-Windows
-"py -3 -m pip install -U discord.py"
+Click "Import JSON File", browse and select the Slack chat file you wish to import to Discord.
 
 # Step 4:
-Set up a Discord bot with the permissions of "bot", and "Administrator", or 
-"bot" and give the bot "Read" + "Write" message privileges here: https://discordapp.com/developers/applications/.
+
+Click "Enter Bot Token" and paste your bot's token into the field and press enter.
 
 # Step 5:
-Generate a secret token for the bot. Copy it to clipboard.
 
-# Step 6:
-Insert the bot's token into the "bot.run(TOKEN)" field.
-
-# Step 7:
-Change the location/name of the json file where "test.json" is on the line with "with open('test.json') as json_file:"
-
-# Step 8:
-Invite the bot to your Discord server.
-
-# Step 9:
-Open console and run:
-
-"py slackord.py"
-or
-"python slackord.py"
-
-The bot will now parse all the messages from your Slack message json file.
-
-# Step 10:
-Enter the channel you wish to import messages to and type "!mergeslack"
-
-Messages should now start appearing in the Discord channel you typed the command into.
+Enter any Discord channel and type !slackord. Messages will now post to that channel.
