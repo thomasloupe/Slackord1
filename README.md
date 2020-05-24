@@ -1,4 +1,5 @@
-# Please note: Slackord 2 is out! You can get it here: https://github.com/thomasloupe/Slackord2
+# Please note: Slackord 2 is out! 
+You can get it here: https://github.com/thomasloupe/Slackord2
 
 # Slackord 1.0 by Thomas Loupe
 
