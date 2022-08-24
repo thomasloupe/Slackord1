@@ -11,7 +11,11 @@ from tkinter.filedialog import askopenfilename
 from tkinter import *
 from tkinter import simpledialog
 
-bot = commands.Bot(command_prefix='!')
+intents = discord.Intents.default()
+intents.messages = True
+intents.message_content = True
+bot = commands.Bot(command_prefix='!', intents=intents)
+
 
 
 # Create the popup window to enter the bot's token.
