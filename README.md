@@ -6,16 +6,42 @@ You can get it here: https://github.com/thomasloupe/Slackord2
 A Discord bot that imports Slack-exported JSON chat history to a Discord channel.
 Download the latest executable here: https://github.com/thomasloupe/Slackord/releases/.
 
-Alternatively, you can download the slackord.py script here: https://github.com/thomasloupe/Slackord/blob/master/slackord.py.
+Alternatively, you can download the slackord.py script here and run it directly in Python: https://github.com/thomasloupe/Slackord/blob/master/slackord.py.
 
 # Instructions:
 
 1. Set up Discord bot and create a token here https://discordapp.com/developers/applications/.
 1. Clone this repo or download the python file. `git clone `
-1. Make sure you've installed Python3 and pip.
-1. Install the Discord python wrapper: `python -m pip install discord.py` (Unix/MacOS), or `py -m pip install discord.py` (Windows).
-1. Install Tkinter (if using Tkinter version): `python -m pip install tk` (Unix/MacOS), or `py -m pip install tk` (Windows).
-1. Run the Slackord executable file. `python3 slackord.py`, or `py slackord.py`. The Slackord application should open.
-1. Click "Import JSON File", browse and select the Slack chat file you wish to import to Discord.
-1. Click "Enter Bot Token" and paste your bot's token into the field and press enter.
-1. Enter any Discord channel and type !slackord. Messages will now post to that channel.
+1. Make sure you've installed Python3 from https://www.python.org/downloads/.
+1. Install the Discord python wrapper and Tkinter (if using Tkinter version):
+
+Ubuntu:
+```
+sudo apt-get install python3-pip
+python -m pip install discord.py
+sudo apt-get install python-tk
+```
+
+Mac:
+```
+sudo curl https://bootstrap.pypa.io/get-pip.py | python3
+pip3 install discord.py
+pip3 install tk
+```
+or if using Homebrew:
+```
+brew install python-tk.
+```
+
+Windows:
+```
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py
+pip install discord.py
+pip install tk
+```
+
+5. Run the Slackord executable file, or run Python script by with `python3 slackord.py`, or `py slackord.py`.
+6. Click "Import JSON File", browse and select the Slack chat file you wish to import to Discord.
+7. Click "Enter Bot Token" and paste your bot's token into the field and press enter.
+8. Enter any Discord channel and type !slackord. Messages will now post to that channel.
