@@ -1,7 +1,7 @@
 # Slackord 1.0 by Thomas Loupe
 
 import asyncio
-import datetime
+from datetime import datetime
 import discord
 from discord.ext import commands
 import json
@@ -16,6 +16,21 @@ intents.messages = True
 intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+
+def format_time(timestamp):
+    """
+    Given a timestamp in seconds (potentially fractional) since the epoch,
+    format it in a useful human readable manner
+    """
+    return datetime.fromtimestamp(timestamp).isoformat(sep=' ', timespec='seconds')
+
+
+def format_message(timestamp, real_name, message):
+    """
+    Given a timestamp, real name, and message from slack,
+    format it into a message to post to discord
+    """
+    return f"{format_time(timestamp)} {real_name}: {message}"
 
 
 # Create the popup window to enter the bot's token.
@@ -39,14 +54,11 @@ def Output():
         for message in json.load(f):
             # Print the messages we'll output from Slack JSON file to Discord to GUI window.
             if "user_profile" in message and 'ts' in message and 'text' in message:
-                time = datetime.datetime.fromtimestamp(
-                    float(message['ts'])).strftime('%Y-%m-%d %H:%M:%S')
-                rn = (message['user_profile']['real_name'])
-                mess = (message['text'])
-                guiMessageToSend = (time) + (": ") + (rn) + (" - ") + (mess)
-                frameBox.insert(tk.END, (guiMessageToSend))
-                frameBox.yview(tk.END)
-                frameBox.insert(tk.END, ' ')
+                timestamp = float(message['ts'])
+                real_name = message['user_profile']['real_name']
+                message_text = message['text']
+                full_message_text = format_message(timestamp, real_name, message_text)
+                frameBox.insert(tk.END, full_message_text)
                 frameBox.yview(tk.END)
 
         # When !slackord is typed in a channel, iterate through the JSON file and post each message.
@@ -57,13 +69,11 @@ def Output():
             with open(filename) as f:
                 for message in json.load(f):
                     if "user_profile" in message and 'ts' in message and 'text' in message:
-                        time = datetime.datetime.fromtimestamp(
-                            float(message['ts'])).strftime('%Y-%m-%d %H:%M:%S')
-                        rn = (message['user_profile']['real_name'])
-                        mess = (message['text'])
-                        messageToSend = (time) + (": ") + \
-                            (rn) + (" - ") + (mess)
-                        await ctx.send(messageToSend)
+                        timestamp = float(message['ts'])
+                        real_name = message['user_profile']['real_name']
+                        message_text = message['text']
+                        full_message_text = format_message(timestamp, real_name, message_text)
+                        await ctx.send(full_message_text)
                         # Output to the GUI that the message was posted.
                         frameBox.insert(tk.END, 'Message posted!')
                         frameBox.yview(tk.END)
