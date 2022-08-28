@@ -20,33 +20,33 @@ Alternatively, you can download the slackord.py script here and run it directly 
 1. Make sure you've installed Python3+ from https://www.python.org/downloads/. Tkinter comes bundled with Mac/Windows Python releases.
 1. Install the Discord python wrapper/tk:
 
-Ubuntu:
-```
-sudo apt-get install -y python3 python3-pip python-tk; python3 -m pip install discord.py
-```
+    Ubuntu:
+    ```
+    sudo apt-get install -y python3 python3-pip python-tk; python3 -m pip install discord.py
+    ```
 
-RHEL/Centos:
-```
-sudo yum install -y python3 tkinter python3-pip; python3 -m pip install discord.py
-```
+    RHEL/Centos:
+    ```
+    sudo yum install -y python3 tkinter python3-pip; python3 -m pip install discord.py
+    ```
 
-Mac:
-```
-sudo curl https://bootstrap.pypa.io/get-pip.py | python3; pip3 install discord.py
-```
-or if using Homebrew:
-```
-brew install python-tk.
-```
+    Mac:
+    ```
+    sudo curl https://bootstrap.pypa.io/get-pip.py | python3; pip3 install discord.py
+    ```
+    or if using Homebrew:
+    ```
+    brew install python-tk.
+    ```
 
-Windows:
-```
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python get-pip.py
-pip install discord.py
-```
+    Windows:
+    ```
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python get-pip.py
+    pip install discord.py
+    ```
 
-5. Run the Slackord executable file, or run Python script by with `python3 slackord.py`, or `py slackord.py`.
-6. Click "Import JSON File", browse and select the Slack chat file you wish to import to Discord.
-7. Click "Enter Bot Token" and paste your bot's token into the field and press enter.
-8. Enter any Discord channel and type !slackord. Messages will now post to that channel.
+1. Run the Slackord executable file, or run Python script by with `python3 slackord.py`, or `py slackord.py`.
+1. Click "Import JSON File", browse and select the Slack chat file you wish to import to Discord.
+1. Click "Enter Bot Token" and paste your bot's token into the field and press enter.
+1. Enter any Discord channel and type !slackord. Messages will now post to that channel.
