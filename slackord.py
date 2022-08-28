@@ -46,41 +46,55 @@ def SpawnTokenWindow():
         bot.run(botToken)
 
 
-def Output():
-    filename = tk.filedialog.askopenfilename()
+def parse_json_slack_export(filename):
+    """
+    Parse a JSON file that contains the exported messages from a slack channel
+
+    Return a dict where the keys are the timestamps of the slack messages
+    and the values are formatted strings of the messages ready to post to discord
+    """
+    parsed_messages = dict()
     with open(filename) as f:
-        frameBox.insert(
-            tk.END, 'Slackord will post the following messages to your desired Discord channel:')
-        frameBox.yview(tk.END)
         for message in json.load(f):
-            # Print the messages we'll output from Slack JSON file to Discord to GUI window.
             if "user_profile" in message and 'ts' in message and 'text' in message:
                 timestamp = float(message['ts'])
                 real_name = message['user_profile']['real_name']
                 message_text = message['text']
                 full_message_text = format_message(timestamp, real_name, message_text)
-                frameBox.insert(tk.END, full_message_text)
-                frameBox.yview(tk.END)
+                parsed_messages[timestamp] = full_message_text
+    return parsed_messages
 
-        # When !slackord is typed in a channel, iterate through the JSON file and post each message.
-        @bot.command(pass_context=True)
-        async def slackord(ctx):
-            # XXX none of the Tk output here is visible
-            #     possibly related to bot.run() vs. bot.start() above
-            frameBox.insert(tk.END, 'Posting messages into Discord!')
+
+def Output():
+    filename = tk.filedialog.askopenfilename()
+    parsed_messages = parse_json_slack_export(filename)
+    frameBox.insert(
+        tk.END, f"Slackord will post the following {len(parsed_messages)} messages to your desired Discord channel:")
+    frameBox.yview(tk.END)
+    for message in parsed_messages.values():
+        frameBox.insert(tk.END, message)
+        frameBox.yview(tk.END)
+
+    # When !slackord is typed in a channel, iterate through the JSON file and post each message.
+    @bot.command(pass_context=True)
+    async def slackord(ctx):
+        # Note that this function has access to local variables set in Output() above
+        # That is, we have access to the previously parsed messages
+        #
+        # XXX none of the Tk output here is visible
+        #     possibly related to bot.run() vs. bot.start() above
+        frameBox.insert(tk.END, 'Posting messages into Discord!')
+        frameBox.yview(tk.END)
+        # print(parsed_messages)
+        for message in parsed_messages.values():
+            await ctx.send(message)
+            # Output to the GUI that the message was posted.
+            frameBox.insert(tk.END, 'Message posted!')
             frameBox.yview(tk.END)
-            with open(filename) as f:
-                for message in json.load(f):
-                    if "user_profile" in message and 'ts' in message and 'text' in message:
-                        timestamp = float(message['ts'])
-                        real_name = message['user_profile']['real_name']
-                        message_text = message['text']
-                        full_message_text = format_message(timestamp, real_name, message_text)
-                        await ctx.send(full_message_text)
-                        # Output to the GUI that the message was posted.
-                        frameBox.insert(tk.END, 'Message posted!')
-                        frameBox.yview(tk.END)
-            frameBox.insert(tk.END, 'Done posting messages')
+            # XXX add bare print statements for now since GUI output during command execution is broken
+            print("Message posted")
+        frameBox.insert(tk.END, 'Done posting messages')
+        print("Done posting messages")
 
 
 # Begin tkinter setup.
