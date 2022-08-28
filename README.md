@@ -31,7 +31,6 @@ Mac:
 ```
 sudo curl https://bootstrap.pypa.io/get-pip.py | python3
 pip3 install discord.py
-pip3 install tk
 ```
 or if using Homebrew:
 ```
@@ -43,7 +42,6 @@ Windows:
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python get-pip.py
 pip install discord.py
-pip install tk
 ```
 
 5. Run the Slackord executable file, or run Python script by with `python3 slackord.py`, or `py slackord.py`.
