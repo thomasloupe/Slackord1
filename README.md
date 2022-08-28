@@ -17,20 +17,22 @@ Alternatively, you can download the slackord.py script here and run it directly 
    https://slack.com/help/articles/201658943-Export-your-workspace-data
 1. Set up Discord bot and create a token here https://discordapp.com/developers/applications/.
 1. Clone this repo or download the python file. `git clone `
-1. Make sure you've installed Python3 from https://www.python.org/downloads/.
-1. Install the Discord python wrapper and Tkinter (if using Tkinter version):
+1. Make sure you've installed Python3+ from https://www.python.org/downloads/. Tkinter comes bundled with Mac/Windows Python releases.
+1. Install the Discord python wrapper/tk:
 
 Ubuntu:
 ```
-sudo apt-get install python3-pip
-python -m pip install discord.py
-sudo apt-get install python-tk
+sudo apt-get install -y python3 python3-pip python-tk; python3 -m pip install discord.py
+```
+
+RHEL/Centos:
+```
+sudo yum install -y python3 tkinter python3-pip; python3 -m pip install discord.py
 ```
 
 Mac:
 ```
-sudo curl https://bootstrap.pypa.io/get-pip.py | python3
-pip3 install discord.py
+sudo curl https://bootstrap.pypa.io/get-pip.py | python3; pip3 install discord.py
 ```
 or if using Homebrew:
 ```
