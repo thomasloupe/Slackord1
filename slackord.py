@@ -5,6 +5,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 import json
+from pprint import pprint
 import time
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
@@ -50,18 +51,40 @@ def parse_json_slack_export(filename):
     """
     Parse a JSON file that contains the exported messages from a slack channel
 
-    Return a dict where the keys are the timestamps of the slack messages
-    and the values are formatted strings of the messages ready to post to discord
+    Return a dict where:
+    - the keys are the timestamps of the slack messages
+    - the values are tuples of length 2
+      - the first item is the formatted string of a message ready to post to discord
+      - the second item is a dict if this message has a thread, otherwise None.
+        - the keys are the timestamps of the messages within the thread
+        - the values are the formatting strings of the messages within the thread
     """
     parsed_messages = dict()
     with open(filename) as f:
         for message in json.load(f):
-            if "user_profile" in message and 'ts' in message and 'text' in message:
+            if 'user_profile' in message and 'ts' in message and 'text' in message:
                 timestamp = float(message['ts'])
                 real_name = message['user_profile']['real_name']
                 message_text = message['text']
                 full_message_text = format_message(timestamp, real_name, message_text)
-                parsed_messages[timestamp] = full_message_text
+
+                if 'replies' in message:
+                    # this is the head of a thread
+                    parsed_messages[timestamp] = (full_message_text, dict())
+                elif 'thread_ts' in message:
+                    # this is within a thread
+                    thread_timestamp = float(message['thread_ts'])
+                    if thread_timestamp in parsed_messages:
+                        # add to the dict for the existing thread
+                        parsed_messages[thread_timestamp][1][timestamp] = full_message_text
+                    else:
+                        # this shouldn't happen
+                        warn(f"Can't find thread with timestamp {thread_timestamp} for message with timestamp {timestamp},"
+                             " treating as out of thread")
+                        parsed_messages[timestamp] = (full_message_text, None)
+                else:
+                    # this is not associated with a thread at all                                               
+                    parsed_messages[timestamp] = (full_message_text, None)
     return parsed_messages
 
 
@@ -71,7 +94,9 @@ def Output():
     frameBox.insert(
         tk.END, f"Slackord will post the following {len(parsed_messages)} messages to your desired Discord channel:")
     frameBox.yview(tk.END)
-    for message in parsed_messages.values():
+    for timestamp in sorted(parsed_messages.keys()):
+        # XXX not yet accounting for messages within thread
+        (message, thread) = parsed_messages[timestamp]
         frameBox.insert(tk.END, message)
         frameBox.yview(tk.END)
 
@@ -85,9 +110,16 @@ def Output():
         #     possibly related to bot.run() vs. bot.start() above
         frameBox.insert(tk.END, 'Posting messages into Discord!')
         frameBox.yview(tk.END)
-        # print(parsed_messages)
-        for message in parsed_messages.values():
+        pprint(parsed_messages)
+        for timestamp in sorted(parsed_messages.keys()):
+            (message, thread) = parsed_messages[timestamp]
+            # XXX not yet accounting for messages within thread
+            if thread:
+                print(f"message at timestamp {timestamp} DOES have a thread")
+            else:
+                print(f"message at timestamp {timestamp} does NOT have a thread")
             await ctx.send(message)
+
             # Output to the GUI that the message was posted.
             frameBox.insert(tk.END, 'Message posted!')
             frameBox.yview(tk.END)
