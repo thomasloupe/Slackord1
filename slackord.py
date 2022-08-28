@@ -5,7 +5,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 import json
-from pprint import pprint
+# from pprint import pprint
 import time
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
@@ -96,7 +96,6 @@ def Output():
                     " (plus thread contents if applicable) to your desired Discord channel:")
     frameBox.yview(tk.END)
     for timestamp in sorted(parsed_messages.keys()):
-        # XXX not yet accounting for messages within thread
         (message, thread) = parsed_messages[timestamp]
         frameBox.insert(tk.END, message)
         if thread:
@@ -105,7 +104,8 @@ def Output():
                 frameBox.insert(tk.END, f"\t{thread_message}")
         frameBox.yview(tk.END)
 
-    # When !slackord is typed in a channel, iterate through the JSON file and post each message.
+    # When !slackord is typed in a channel, iterate through the results of previously parsing the
+    # JSON file and post each message. Threading is preserved.
     @bot.command(pass_context=True)
     async def slackord(ctx):
         # Note that this function has access to local variables set in Output() above
@@ -115,21 +115,27 @@ def Output():
         #     possibly related to bot.run() vs. bot.start() above
         frameBox.insert(tk.END, 'Posting messages into Discord!')
         frameBox.yview(tk.END)
-        pprint(parsed_messages)
+        # pprint(parsed_messages)
         for timestamp in sorted(parsed_messages.keys()):
             (message, thread) = parsed_messages[timestamp]
-            # XXX not yet accounting for messages within thread
-            if thread:
-                print(f"message at timestamp {timestamp} DOES have a thread")
-            else:
-                print(f"message at timestamp {timestamp} does NOT have a thread")
-            await ctx.send(message)
-
+            sent_message = await ctx.send(message)
             # Output to the GUI that the message was posted.
-            frameBox.insert(tk.END, 'Message posted!')
+            frameBox.insert(tk.END, f"Message posted: {timestamp}")
             frameBox.yview(tk.END)
             # XXX add bare print statements for now since GUI output during command execution is broken
-            print("Message posted")
+            print(f"Message posted: {timestamp}")
+
+            if thread:
+                created_thread = await sent_message.create_thread(name=f"thread{timestamp}")
+                for timestamp_in_thread in sorted(thread.keys()):
+                    thread_message = thread[timestamp_in_thread]
+                    await created_thread.send(thread_message)
+                    # Output to the GUI that the message in the thread was posted.
+                    frameBox.insert(tk.END, f"Message in thread posted: {timestamp_in_thread}")
+                    frameBox.yview(tk.END)
+                    # XXX add bare print statements for now since GUI output during command execution is broken
+                    print(f"Message in thread posted: {timestamp_in_thread}")
+
         frameBox.insert(tk.END, 'Done posting messages')
         print("Done posting messages")
 
