@@ -10,6 +10,11 @@ Alternatively, you can download the slackord.py script here and run it directly 
 
 # Instructions:
 
+1. Export your Slack data as JSON.  Note that only public channels are
+   included if you have the Free or Pro version. You need a Business+
+   or Enterprise Grid plan to export private channels and direct
+   messages (DMs).
+   https://slack.com/help/articles/201658943-Export-your-workspace-data
 1. Set up Discord bot and create a token here https://discordapp.com/developers/applications/.
 1. Clone this repo or download the python file. `git clone `
 1. Make sure you've installed Python3 from https://www.python.org/downloads/.
