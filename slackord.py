@@ -91,13 +91,18 @@ def parse_json_slack_export(filename):
 def Output():
     filename = tk.filedialog.askopenfilename()
     parsed_messages = parse_json_slack_export(filename)
-    frameBox.insert(
-        tk.END, f"Slackord will post the following {len(parsed_messages)} messages to your desired Discord channel:")
+    frameBox.insert(tk.END,
+                    f"Slackord will post the following {len(parsed_messages)} messages"
+                    " (plus thread contents if applicable) to your desired Discord channel:")
     frameBox.yview(tk.END)
     for timestamp in sorted(parsed_messages.keys()):
         # XXX not yet accounting for messages within thread
         (message, thread) = parsed_messages[timestamp]
         frameBox.insert(tk.END, message)
+        if thread:
+            for timestamp_in_thread in sorted(thread.keys()):
+                thread_message = thread[timestamp_in_thread]
+                frameBox.insert(tk.END, f"\t{thread_message}")
         frameBox.yview(tk.END)
 
     # When !slackord is typed in a channel, iterate through the JSON file and post each message.
