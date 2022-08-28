@@ -42,6 +42,7 @@ def SpawnTokenWindow():
         frameBox.yview(tk.END)
     else:
         # TODO: Thread this process with bot.start().
+        # XXX the bot is functional, but the GUI hangs after entering the token and never returns
         bot.run(botToken)
 
 
@@ -64,6 +65,8 @@ def Output():
         # When !slackord is typed in a channel, iterate through the JSON file and post each message.
         @bot.command(pass_context=True)
         async def slackord(ctx):
+            # XXX none of the Tk output here is visible
+            #     possibly related to bot.run() vs. bot.start() above
             frameBox.insert(tk.END, 'Posting messages into Discord!')
             frameBox.yview(tk.END)
             with open(filename) as f:
@@ -77,6 +80,7 @@ def Output():
                         # Output to the GUI that the message was posted.
                         frameBox.insert(tk.END, 'Message posted!')
                         frameBox.yview(tk.END)
+            frameBox.insert(tk.END, 'Done posting messages')
 
 
 # Begin tkinter setup.
