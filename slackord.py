@@ -57,7 +57,7 @@ def parse_json_slack_export(filename):
       - the first item is the formatted string of a message ready to post to discord
       - the second item is a dict if this message has a thread, otherwise None.
         - the keys are the timestamps of the messages within the thread
-        - the values are the formatting strings of the messages within the thread
+        - the values are the formatted strings of the messages within the thread
     """
     parsed_messages = dict()
     with open(filename) as f:
