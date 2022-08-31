@@ -1,4 +1,5 @@
-# Slackord 1.0 by Thomas Loupe
+# Slackord 1.2 by Thomas Loupe.
+# Additional contributions by richfromm.
 
 import asyncio
 from datetime import datetime
@@ -144,7 +145,7 @@ def Output():
 # Create tkinter instance.
 window = tk.Tk()
 # Set window title.
-window.title("Slackord 1.0a by Thomas Loupe")
+window.title("Slackord 1.2")
 # Set window size.
 window.geometry("500x300")
 # Disallow window resizing.
