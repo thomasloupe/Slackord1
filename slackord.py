@@ -12,6 +12,7 @@ import tkinter as tk
 from tkinter.filedialog import askopenfilename
 from tkinter import *
 from tkinter import simpledialog
+from warnings import warn
 
 intents = discord.Intents.default()
 intents.messages = True
