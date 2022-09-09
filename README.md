@@ -1,3 +1,10 @@
+# XXX OUT OF DATE XXX
+
+This repo has hard forked and is in the process of a significant
+refactoring.
+
+This README will be updated when that effort is complete.
+
 # Please note: Slackord 2 is out! 
 You can get it here: https://github.com/thomasloupe/Slackord2
 
