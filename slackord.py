@@ -33,7 +33,10 @@ def format_message(timestamp, real_name, message):
     Given a timestamp, real name, and message from slack,
     format it into a message to post to discord
     """
-    return f"{format_time(timestamp)} {real_name}: {message}"
+    if real_name:
+        return f"{format_time(timestamp)} {real_name}: {message}"
+    else:
+        return f"{format_time(timestamp)}: {message}"
 
 
 # Create the popup window to enter the bot's token.
@@ -76,16 +79,21 @@ def parse_json_slack_export(filename):
                 elif 'thread_ts' in message:
                     # this is within a thread
                     thread_timestamp = float(message['thread_ts'])
-                    if thread_timestamp in parsed_messages:
-                        # add to the dict for the existing thread
-                        parsed_messages[thread_timestamp][1][timestamp] = full_message_text
-                    else:
-                        # this shouldn't happen
+                    if thread_timestamp not in parsed_messages:
+                        # can't find the root of the thread to which this message belongs
+                        # ideally this shouldn't happen
+                        # but it could if you have a long enough message history not captured in the exported file
                         warn(f"Can't find thread with timestamp {thread_timestamp} for message with timestamp {timestamp},"
-                             " treating as out of thread")
-                        parsed_messages[timestamp] = (full_message_text, None)
+                             " creating synthetic thread")
+                        fake_message_text = format_message(
+                            thread_timestamp, None, '_Unable to find start of exported thread_')
+                        parsed_messages[thread_timestamp] = (fake_message_text, dict())
+
+                    # add to the dict either for the existing thread
+                    # or the fake thread that we created above
+                    parsed_messages[thread_timestamp][1][timestamp] = full_message_text
                 else:
-                    # this is not associated with a thread at all                                               
+                    # this is not associated with a thread at all
                     parsed_messages[timestamp] = (full_message_text, None)
     return parsed_messages
 
