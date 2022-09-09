@@ -14,7 +14,8 @@ import time
 from warnings import warn
 
 
-# XXX move into main below?
+# XXX bot needs to be scoped at the top level to use the `@bot.command` annotation
+#     so this can *not* move to with start_bot()
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
@@ -145,7 +146,6 @@ if __name__ == '__main__':
 
     token = argv[1]
     filename = argv[2]
-
     #print(f"token={token} filename={filename}")
 
     parsed_messages = parse_json_slack_export(filename)
