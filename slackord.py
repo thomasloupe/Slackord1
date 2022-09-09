@@ -1,19 +1,20 @@
-# Slackord 1.2 by Thomas Loupe.
-# Additional contributions by richfromm.
+#!/usr/bin/env python
+
+# Slackord originally by Thomas Loupe
+# Additional contributions, then hard fork and significant changes, by Rich Fromm
 
 import asyncio
 from datetime import datetime
 import discord
 from discord.ext import commands
 import json
-# from pprint import pprint
+#from pprint import pprint
+from sys import argv, exit
 import time
-import tkinter as tk
-from tkinter.filedialog import askopenfilename
-from tkinter import *
-from tkinter import simpledialog
 from warnings import warn
 
+
+# XXX move into main below?
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
@@ -39,17 +40,12 @@ def format_message(timestamp, real_name, message):
         return f"{format_time(timestamp)}: {message}"
 
 
-# Create the popup window to enter the bot's token.
-def SpawnTokenWindow():
-    botToken = simpledialog.askstring(
-        "Enter Token", "Please enter your Discord bot token here")
-    if not botToken:
-        frameBox.insert(tk.END, 'User cancelled or no token entered.')
-        frameBox.yview(tk.END)
-    else:
-        # TODO: Thread this process with bot.start().
-        # XXX the bot is functional, but the GUI hangs after entering the token and never returns
-        bot.run(botToken)
+def start_bot(token):
+    # TODO: Thread this process with bot.start().
+    # XXX the bot is functional, but the script waits indefinitely after entering the token and doesn't just exit
+    #     which is somewhat intentional and the nature of the bot
+    #     but maybe a bot isn't the best match for a CLI script to do a single import
+    bot.run(token)
 
 
 def parse_json_slack_export(filename):
@@ -98,82 +94,68 @@ def parse_json_slack_export(filename):
     return parsed_messages
 
 
-def Output():
-    filename = tk.filedialog.askopenfilename()
-    parsed_messages = parse_json_slack_export(filename)
-    frameBox.insert(tk.END,
-                    f"Slackord will post the following {len(parsed_messages)} messages"
-                    " (plus thread contents if applicable) to your desired Discord channel:")
-    frameBox.yview(tk.END)
+def output_messages(parsed_messages):
+    """
+    Output the parsed messages to stdout
+    """
+    print(f"Slackord will post the following {len(parsed_messages)} messages"
+          " (plus thread contents if applicable) to your desired Discord channel:")
     for timestamp in sorted(parsed_messages.keys()):
         (message, thread) = parsed_messages[timestamp]
-        frameBox.insert(tk.END, message)
+        print(message)
         if thread:
             for timestamp_in_thread in sorted(thread.keys()):
                 thread_message = thread[timestamp_in_thread]
-                frameBox.insert(tk.END, f"\t{thread_message}")
-        frameBox.yview(tk.END)
-
-    # When !slackord is typed in a channel, iterate through the results of previously parsing the
-    # JSON file and post each message. Threading is preserved.
-    @bot.command(pass_context=True)
-    async def slackord(ctx):
-        # Note that this function has access to local variables set in Output() above
-        # That is, we have access to the previously parsed messages
-        #
-        # XXX none of the Tk output here is visible
-        #     possibly related to bot.run() vs. bot.start() above
-        frameBox.insert(tk.END, 'Posting messages into Discord!')
-        frameBox.yview(tk.END)
-        # pprint(parsed_messages)
-        for timestamp in sorted(parsed_messages.keys()):
-            (message, thread) = parsed_messages[timestamp]
-            sent_message = await ctx.send(message)
-            # Output to the GUI that the message was posted.
-            frameBox.insert(tk.END, f"Message posted: {timestamp}")
-            frameBox.yview(tk.END)
-            # XXX add bare print statements for now since GUI output during command execution is broken
-            print(f"Message posted: {timestamp}")
-
-            if thread:
-                created_thread = await sent_message.create_thread(name=f"thread{timestamp}")
-                for timestamp_in_thread in sorted(thread.keys()):
-                    thread_message = thread[timestamp_in_thread]
-                    await created_thread.send(thread_message)
-                    # Output to the GUI that the message in the thread was posted.
-                    frameBox.insert(tk.END, f"Message in thread posted: {timestamp_in_thread}")
-                    frameBox.yview(tk.END)
-                    # XXX add bare print statements for now since GUI output during command execution is broken
-                    print(f"Message in thread posted: {timestamp_in_thread}")
-
-        frameBox.insert(tk.END, 'Done posting messages')
-        print("Done posting messages")
+                print(f"\t{thread_message}")
 
 
-# Begin tkinter setup.
-# Create tkinter instance.
-window = tk.Tk()
-# Set window title.
-window.title("Slackord 1.2")
-# Set window size.
-window.geometry("500x300")
-# Disallow window resizing.
-window.resizable(False, False)
+@bot.command(pass_context=True)
+async def slackord(ctx):
+    """
+    When !slackord is typed in a channel, iterate through the results of previously parsing the
+    JSON file and post each message. Threading is preserved.
+    """
+    # XXX somehow this function has access to parsed_messages, I'm not quite sure how
+    print('Posting messages into Discord!')
+    #pprint(parsed_messages)
+    for timestamp in sorted(parsed_messages.keys()):
+        (message, thread) = parsed_messages[timestamp]
+        sent_message = await ctx.send(message)
+        print(f"Message posted: {timestamp}")
 
-# Set up the file browse button.
-tk.Button(window, text="Step 1: Select JSON File", command=Output).pack()
+        if thread:
+            created_thread = await sent_message.create_thread(name=f"thread{timestamp}")
+            for timestamp_in_thread in sorted(thread.keys()):
+                thread_message = thread[timestamp_in_thread]
+                await created_thread.send(thread_message)
+                print(f"Message in thread posted: {timestamp_in_thread}")
 
-# Set up the token button
-tk.Button(window, text="Step 2: Enter Bot Token",
-          command=SpawnTokenWindow).pack()
+    # XXXX at this point the bot will just wait
+    # but as a CLI script, that's not really the best model, as we really are done
+    # and if we want to do another import, we'd re-run the script
+    print("Done posting messages")
+    print("Ctrl-C to quit")
 
-# Create an empty text field and scrollbar to print updates and messages to.
-frame = Frame(window)
-scrollbar = Scrollbar(window)
-scrollbar.pack(side=RIGHT, fill=Y)
-frameBox = Listbox(window, yscrollcommand=scrollbar.set)
-frameBox.pack(fill='both', expand=True)
-scrollbar.config(command=frameBox.yview)
 
-# Keep the application running unless closed.
-window.mainloop()
+if __name__ == '__main__':
+    # XXX eventually do real arg parsing
+    if len(argv) != 3:
+        print(f"Usage {argv[0]} <token> <filename>")
+        exit(1)
+
+    token = argv[1]
+    filename = argv[2]
+
+    #print(f"token={token} filename={filename}")
+
+    parsed_messages = parse_json_slack_export(filename)
+    output_messages(parsed_messages)
+
+    print("Messages from Slack export successfully parsed.")
+    print("Type \'!slackord\' into a Discord channel to import.")
+    start_bot(token)
+
+    # XXX we will only get here via Ctrl-C
+    #     but we do *not* get a KeyboardInterrupt b/c it is caught by the run() loop in the discord client
+    print("Discord import successful.")
+    exit(0)
