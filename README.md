@@ -1,7 +1,7 @@
 # XXX OUT OF DATE XXX
 
-This repo has hard forked and is in the process of a significant
-refactoring.
+This repo has hard forked (from Slackord) and is in the process of a
+significant refactoring. The new repo is slack2discord
 
 This README will be updated when that effort is complete.
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-# Slackord originally by Thomas Loupe
-# Additional contributions, then hard fork and significant changes, by Rich Fromm
+# This is originally based on Slackord, by Thomas Loupe
+# Enough chaanges led to a hard fork, it is now slack2discord, by Rich Fromm
 
 import asyncio
 from datetime import datetime
