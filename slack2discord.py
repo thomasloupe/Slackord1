@@ -8,10 +8,14 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 import json
+import logging
 #from pprint import pprint
 from sys import argv, exit
 import time
 from warnings import warn
+
+
+logger = logging.getLogger('slack2discord')
 
 
 # XXX bot needs to be scoped at the top level to use the `@bot.command` annotation
@@ -46,7 +50,10 @@ def start_bot(token):
     # XXX the bot is functional, but the script waits indefinitely after entering the token and doesn't just exit
     #     which is somewhat intentional and the nature of the bot
     #     but maybe a bot isn't the best match for a CLI script to do a single import
-    bot.run(token)
+    #
+    # Normally this sets up logging automatically.
+    # But we have already set up logging manually, so disable that here.
+    bot.run(token, log_handler=None)
 
 
 def parse_json_slack_export(filename):
@@ -61,6 +68,12 @@ def parse_json_slack_export(filename):
         - the keys are the timestamps of the messages within the thread
         - the values are the formatted strings of the messages within the thread
     """
+    # XXX testing
+    logger.debug("This is a log DEBUG test in parse_json_slack_export()")
+    logger.info("This is a log INFO test in parse_json_slack_export()")
+    logger.warning("This is a log WARNING test in parse_json_slack_export()")
+    logger.error("This is a log ERROR test in parse_json_slack_export()")
+
     parsed_messages = dict()
     with open(filename) as f:
         for message in json.load(f):
@@ -116,6 +129,12 @@ async def slackord(ctx):
     When !slackord is typed in a channel, iterate through the results of previously parsing the
     JSON file and post each message. Threading is preserved.
     """
+    # XXX testing
+    logger.debug("This is a log DEBUG test in slackord()")
+    logger.info("This is a log INFO test in slackord()")
+    logger.warning("This is a log WARNING test in slackord()")
+    logger.error("This is a log ERROR test in slackord()")
+
     # XXX somehow this function has access to parsed_messages, I'm not quite sure how
     print('Posting messages into Discord!')
     #pprint(parsed_messages)
@@ -139,6 +158,21 @@ async def slackord(ctx):
 
 
 if __name__ == '__main__':
+    # Normally logging gets set up automatically when discord.Client.run() is called.
+    # But we want to use logging before then, with the same config.
+    # So set it up manually.
+    discord.utils.setup_logging(root=True)
+
+    # format is copied from discord.utils.setup_logging()
+    # logging.basicConfig(format='[{asctime}] [{levelname:<8}] {name}: {message}',
+    #                     datefmt='%Y-%m-%d %H:%M:%S',
+    #                     style='{')
+    # logger.setLevel(logging.INFO)
+    logger.debug("This is a log DEBUG test")
+    logger.info("This is a log INFO test")
+    logger.warning("This is a log WARNING test")
+    logger.error("This is a log ERROR test")
+
     # XXX eventually do real arg parsing
     if len(argv) != 3:
         print(f"Usage {argv[0]} <token> <filename>")
