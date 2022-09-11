@@ -115,6 +115,9 @@ def output_messages(parsed_messages, verbose):
     logger.info(f"Slackord will post{verbose_substr}{len(parsed_messages)} messages"
                 " (plus thread contents if applicable) to your desired Discord channel"
                 " when you type \'!slackord\' in that channel")
+    if not verbose:
+        return
+
     for timestamp in sorted(parsed_messages.keys()):
         (message, thread) = parsed_messages[timestamp]
         logger.info(message)
