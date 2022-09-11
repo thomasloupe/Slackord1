@@ -39,9 +39,9 @@ def format_message(timestamp, real_name, message):
     format it into a message to post to discord
     """
     if real_name:
-        return f"{format_time(timestamp)} {real_name}: {message}"
+        return f"`{format_time(timestamp)}` **{real_name}** {message}"
     else:
-        return f"{format_time(timestamp)}: {message}"
+        return f"`{format_time(timestamp)}` {message}"
 
 
 def start_bot(token):
