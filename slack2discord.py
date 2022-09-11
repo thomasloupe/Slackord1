@@ -9,7 +9,7 @@ import discord
 from discord.ext import commands
 import json
 import logging
-#from pprint import pprint
+from pprint import pprint
 from sys import argv, exit
 import time
 
@@ -101,11 +101,12 @@ def parse_json_slack_export(filename):
     return parsed_messages
 
 
-def output_messages(parsed_messages):
+def output_messages(parsed_messages, verbose):
     """
     Output the parsed messages to stdout
     """
-    logger.info(f"Slackord will post the following {len(parsed_messages)} messages"
+    verbose_substr = " the following" if verbose else " "
+    logger.info(f"Slackord will post{verbose_substr}{len(parsed_messages)} messages"
                 " (plus thread contents if applicable) to your desired Discord channel"
                 " when you type \'!slackord\' in that channel")
     for timestamp in sorted(parsed_messages.keys()):
@@ -123,9 +124,10 @@ async def slackord(ctx):
     When !slackord is typed in a channel, iterate through the results of previously parsing the
     JSON file and post each message. Threading is preserved.
     """
-    # XXX somehow this function has access to parsed_messages, I'm not quite sure how
+    # XXX somehow this function has access to parsed_messages and verbose, I'm not quite sure how
     logger.info('Posting messages into Discord!')
-    #pprint(parsed_messages)
+    if verbose:
+        pprint(parsed_messages)
     for timestamp in sorted(parsed_messages.keys()):
         (message, thread) = parsed_messages[timestamp]
         sent_message = await ctx.send(message)
@@ -158,9 +160,11 @@ if __name__ == '__main__':
 
     token = argv[1]
     filename = argv[2]
+    # XXX this should be an arg, for now just edit here
+    verbose = False
 
     parsed_messages = parse_json_slack_export(filename)
-    output_messages(parsed_messages)
+    output_messages(parsed_messages, verbose)
 
     logger.info("Messages from Slack export successfully parsed.")
     logger.info("Type \'!slackord\' into a Discord channel to import.")
