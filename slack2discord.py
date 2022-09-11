@@ -12,7 +12,6 @@ import logging
 #from pprint import pprint
 from sys import argv, exit
 import time
-from warnings import warn
 
 
 logger = logging.getLogger('slack2discord')
@@ -68,12 +67,6 @@ def parse_json_slack_export(filename):
         - the keys are the timestamps of the messages within the thread
         - the values are the formatted strings of the messages within the thread
     """
-    # XXX testing
-    logger.debug("This is a log DEBUG test in parse_json_slack_export()")
-    logger.info("This is a log INFO test in parse_json_slack_export()")
-    logger.warning("This is a log WARNING test in parse_json_slack_export()")
-    logger.error("This is a log ERROR test in parse_json_slack_export()")
-
     parsed_messages = dict()
     with open(filename) as f:
         for message in json.load(f):
@@ -93,8 +86,8 @@ def parse_json_slack_export(filename):
                         # can't find the root of the thread to which this message belongs
                         # ideally this shouldn't happen
                         # but it could if you have a long enough message history not captured in the exported file
-                        warn(f"Can't find thread with timestamp {thread_timestamp} for message with timestamp {timestamp},"
-                             " creating synthetic thread")
+                        logger.warning(f"Can't find thread with timestamp {thread_timestamp} for message with timestamp {timestamp},"
+                                       " creating synthetic thread")
                         fake_message_text = format_message(
                             thread_timestamp, None, '_Unable to find start of exported thread_')
                         parsed_messages[thread_timestamp] = (fake_message_text, dict())
@@ -112,15 +105,16 @@ def output_messages(parsed_messages):
     """
     Output the parsed messages to stdout
     """
-    print(f"Slackord will post the following {len(parsed_messages)} messages"
-          " (plus thread contents if applicable) to your desired Discord channel:")
+    logger.info(f"Slackord will post the following {len(parsed_messages)} messages"
+                " (plus thread contents if applicable) to your desired Discord channel"
+                " when you type \'!slackord\' in that channel")
     for timestamp in sorted(parsed_messages.keys()):
         (message, thread) = parsed_messages[timestamp]
-        print(message)
+        logger.info(message)
         if thread:
             for timestamp_in_thread in sorted(thread.keys()):
                 thread_message = thread[timestamp_in_thread]
-                print(f"\t{thread_message}")
+                logger.info(f"\t{thread_message}")
 
 
 @bot.command(pass_context=True)
@@ -129,32 +123,26 @@ async def slackord(ctx):
     When !slackord is typed in a channel, iterate through the results of previously parsing the
     JSON file and post each message. Threading is preserved.
     """
-    # XXX testing
-    logger.debug("This is a log DEBUG test in slackord()")
-    logger.info("This is a log INFO test in slackord()")
-    logger.warning("This is a log WARNING test in slackord()")
-    logger.error("This is a log ERROR test in slackord()")
-
     # XXX somehow this function has access to parsed_messages, I'm not quite sure how
-    print('Posting messages into Discord!')
+    logger.info('Posting messages into Discord!')
     #pprint(parsed_messages)
     for timestamp in sorted(parsed_messages.keys()):
         (message, thread) = parsed_messages[timestamp]
         sent_message = await ctx.send(message)
-        print(f"Message posted: {timestamp}")
+        logger.info(f"Message posted: {timestamp}")
 
         if thread:
             created_thread = await sent_message.create_thread(name=f"thread{timestamp}")
             for timestamp_in_thread in sorted(thread.keys()):
                 thread_message = thread[timestamp_in_thread]
                 await created_thread.send(thread_message)
-                print(f"Message in thread posted: {timestamp_in_thread}")
+                logger.info(f"Message in thread posted: {timestamp_in_thread}")
 
     # XXXX at this point the bot will just wait
     # but as a CLI script, that's not really the best model, as we really are done
     # and if we want to do another import, we'd re-run the script
-    print("Done posting messages")
-    print("Ctrl-C to quit")
+    logger.info("Done posting messages")
+    logger.info("Ctrl-C to quit")
 
 
 if __name__ == '__main__':
@@ -163,16 +151,6 @@ if __name__ == '__main__':
     # So set it up manually.
     discord.utils.setup_logging(root=True)
 
-    # format is copied from discord.utils.setup_logging()
-    # logging.basicConfig(format='[{asctime}] [{levelname:<8}] {name}: {message}',
-    #                     datefmt='%Y-%m-%d %H:%M:%S',
-    #                     style='{')
-    # logger.setLevel(logging.INFO)
-    logger.debug("This is a log DEBUG test")
-    logger.info("This is a log INFO test")
-    logger.warning("This is a log WARNING test")
-    logger.error("This is a log ERROR test")
-
     # XXX eventually do real arg parsing
     if len(argv) != 3:
         print(f"Usage {argv[0]} <token> <filename>")
@@ -180,16 +158,15 @@ if __name__ == '__main__':
 
     token = argv[1]
     filename = argv[2]
-    #print(f"token={token} filename={filename}")
 
     parsed_messages = parse_json_slack_export(filename)
     output_messages(parsed_messages)
 
-    print("Messages from Slack export successfully parsed.")
-    print("Type \'!slackord\' into a Discord channel to import.")
+    logger.info("Messages from Slack export successfully parsed.")
+    logger.info("Type \'!slackord\' into a Discord channel to import.")
     start_bot(token)
 
     # XXX we will only get here via Ctrl-C
     #     but we do *not* get a KeyboardInterrupt b/c it is caught by the run() loop in the discord client
-    print("Discord import successful.")
+    logger.info("Discord import successful.")
     exit(0)
