@@ -38,10 +38,16 @@ def format_message(timestamp, real_name, message):
     Given a timestamp, real name, and message from slack,
     format it into a message to post to discord
     """
-    if real_name:
-        return f"`{format_time(timestamp)}` **{real_name}** {message}"
+    # if the message spans multiple lines, output it starting on a separate line from the header
+    if message.find('\n') != -1:
+        message_sep = '\n'
     else:
-        return f"`{format_time(timestamp)}` {message}"
+        message_sep = ' '
+
+    if real_name:
+        return f"`{format_time(timestamp)}` **{real_name}**{message_sep}{message}"
+    else:
+        return f"`{format_time(timestamp)}{message_sep}{message}"
 
 
 def start_bot(token):
