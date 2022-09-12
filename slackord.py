@@ -10,6 +10,7 @@ import json
 import time
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilenames
 from tkinter import *
 from tkinter import simpledialog
 from warnings import warn
@@ -17,6 +18,7 @@ from warnings import warn
 intents = discord.Intents.default()
 intents.messages = True
 intents.message_content = True
+# bot = commands.Bot(command_prefix=['.'], intents=discord.Intents.all())
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 
@@ -52,9 +54,9 @@ def SpawnTokenWindow():
         bot.run(botToken)
 
 
-def parse_json_slack_export(filename):
+def parse_json_slack_export(filenames):
     """
-    Parse a JSON file that contains the exported messages from a slack channel
+    Parse JSON files that contain the exported messages from a slack channel
 
     Return a dict where:
     - the keys are the timestamps of the slack messages
@@ -65,42 +67,46 @@ def parse_json_slack_export(filename):
         - the values are the formatted strings of the messages within the thread
     """
     parsed_messages = dict()
-    with open(filename) as f:
-        for message in json.load(f):
-            if 'user_profile' in message and 'ts' in message and 'text' in message:
-                timestamp = float(message['ts'])
-                real_name = message['user_profile']['real_name']
-                message_text = message['text']
-                full_message_text = format_message(timestamp, real_name, message_text)
 
-                if 'replies' in message:
-                    # this is the head of a thread
-                    parsed_messages[timestamp] = (full_message_text, dict())
-                elif 'thread_ts' in message:
-                    # this is within a thread
-                    thread_timestamp = float(message['thread_ts'])
-                    if thread_timestamp not in parsed_messages:
-                        # can't find the root of the thread to which this message belongs
-                        # ideally this shouldn't happen
-                        # but it could if you have a long enough message history not captured in the exported file
-                        warn(f"Can't find thread with timestamp {thread_timestamp} for message with timestamp {timestamp},"
-                             " creating synthetic thread")
-                        fake_message_text = format_message(
-                            thread_timestamp, None, '_Unable to find start of exported thread_')
-                        parsed_messages[thread_timestamp] = (fake_message_text, dict())
+    for filename in filenames:
+        print(filename)        
 
-                    # add to the dict either for the existing thread
-                    # or the fake thread that we created above
-                    parsed_messages[thread_timestamp][1][timestamp] = full_message_text
-                else:
-                    # this is not associated with a thread at all
-                    parsed_messages[timestamp] = (full_message_text, None)
+        with open(filename) as f:
+            for message in json.load(f):
+                if 'user_profile' in message and 'ts' in message and 'text' in message:
+                    timestamp = float(message['ts'])
+                    real_name = message['user_profile']['real_name']
+                    message_text = message['text']
+                    full_message_text = format_message(timestamp, real_name, message_text)
+
+                    if 'replies' in message:
+                        # this is the head of a thread
+                        parsed_messages[timestamp] = (full_message_text, dict())
+                    elif 'thread_ts' in message:
+                        # this is within a thread
+                        thread_timestamp = float(message['thread_ts'])
+                        if thread_timestamp not in parsed_messages:
+                            # can't find the root of the thread to which this message belongs
+                            # ideally this shouldn't happen
+                            # but it could if you have a long enough message history not captured in the exported file
+                            warn(f"Can't find thread with timestamp {thread_timestamp} for message with timestamp {timestamp},"
+                                 " creating synthetic thread")
+                            fake_message_text = format_message(
+                                thread_timestamp, None, '_Unable to find start of exported thread_')
+                            parsed_messages[thread_timestamp] = (fake_message_text, dict())
+
+                        # add to the dict either for the existing thread
+                        # or the fake thread that we created above
+                        parsed_messages[thread_timestamp][1][timestamp] = full_message_text
+                    else:
+                        # this is not associated with a thread at all
+                        parsed_messages[timestamp] = (full_message_text, None)    
     return parsed_messages
 
 
 def Output():
-    filename = tk.filedialog.askopenfilename()
-    parsed_messages = parse_json_slack_export(filename)
+    filenames = tk.filedialog.askopenfilenames()    
+    parsed_messages = parse_json_slack_export(filenames)
     frameBox.insert(tk.END,
                     f"Slackord will post the following {len(parsed_messages)} messages"
                     " (plus thread contents if applicable) to your desired Discord channel:")
