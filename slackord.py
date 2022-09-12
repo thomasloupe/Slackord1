@@ -134,13 +134,18 @@ def Output():
         # pprint(parsed_messages)
         for timestamp in sorted(parsed_messages.keys()):
             (message, thread) = parsed_messages[timestamp]
-            sent_message = await ctx.send(message)
-            # Output to the GUI that the message was posted.
-            frameBox.insert(tk.END, f"Message posted: {timestamp}")
-            frameBox.yview(tk.END)
-            # XXX add bare print statements for now since GUI output during command execution is broken
-            print(f"Message posted: {timestamp}")
 
+            try: 
+                sent_message = await ctx.send(message)
+                # Output to the GUI that the message was posted.
+                frameBox.insert(tk.END, f"Message posted: {timestamp}")
+                frameBox.yview(tk.END)
+                # XXX add bare print statements for now since GUI output during command execution is broken
+                print(f"Message posted: {timestamp}")
+            except:
+                print("Skipping this message due to error")
+                continue
+            
             if thread:
                 created_thread = await sent_message.create_thread(name=f"thread{timestamp}")
                 for timestamp_in_thread in sorted(thread.keys()):
