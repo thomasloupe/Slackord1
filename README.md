@@ -1,7 +1,11 @@
-# Please note: Slackord 2 is out! 
+# Please note: Slackord 2 is out for Windows, Linux, and Mac.
 You can get it here: https://github.com/thomasloupe/Slackord2
 
-# Slackord 1.0 by Thomas Loupe
+# Important Note:
+Because Slackord2 is Slackord1's successor, Slackord1 has reached end of life and is longer being maintained.</br>
+However, richfromm and I have mutually agreed that he will carry on the spirit of Slackord1, now called Slack2Discord, at https://github.com/richfromm/slack2discord.
+
+# Slackord 1 by Thomas Loupe
 
 A Discord bot that imports Slack-exported JSON chat history to a Discord channel.
 Download the latest executable here: https://github.com/thomasloupe/Slackord/releases/.
