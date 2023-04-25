@@ -1,8 +1,7 @@
-# Please note: Slackord 2 is out for Windows, Linux, and Mac.
-You can get it here: https://github.com/thomasloupe/Slackord2
+# Please note: This repository is no longer maintained, but you can find the new Slackord, which is compatible with Windows, Linux, and Mac right [here](https://github.com/thomasloupe/Slackord).
 
 # Important Note:
-Because Slackord2 is Slackord1's successor, Slackord1 has reached end of life and is longer being maintained.</br>
+Slackord1 has reached end of life and is longer being maintained.</br>
 However, richfromm and I have mutually agreed that he will carry on the spirit of Slackord1, now called Slack2Discord, at https://github.com/richfromm/slack2discord.
 
 # Slackord 1 by Thomas Loupe
