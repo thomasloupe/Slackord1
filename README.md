@@ -1,4 +1,4 @@
-# Please note: This repository is no longer maintained, but you can find the new Slackord, which is compatible with Windows, Linux, and Mac right [here](https://github.com/thomasloupe/Slackord).
+# Please note: This repository is no longer maintained, but you can find the new Slackord [here](https://github.com/thomasloupe/Slackord).
 
 # Important Note:
 Slackord1 has reached end of life and is longer being maintained.</br>
